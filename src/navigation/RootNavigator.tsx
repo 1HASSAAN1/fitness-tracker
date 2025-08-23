@@ -3,8 +3,10 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
 import { auth } from "../lib/firebase";
+import HistoryScreen from "../screens/HistoryScreen";
 import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
+import WorkoutEditor from "../screens/WorkoutEditor";
 
 const Stack = createNativeStackNavigator();
 
@@ -13,10 +15,8 @@ export default function RootNavigator() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    return onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setLoading(false);
-    });
+    const unsub = onAuthStateChanged(auth, (u) => { setUser(u); setLoading(false); });
+    return unsub;
   }, []);
 
   if (loading) {
@@ -30,10 +30,20 @@ export default function RootNavigator() {
   return (
     <Stack.Navigator>
       {user ? (
-        <Stack.Screen name="Home" component={HomeScreen} />
-      ) : (
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown:false }} />
-      )}
+    <>
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="WorkoutEditor" component={WorkoutEditor} options={{ title: "New Workout" }} />
+      <Stack.Screen name="History" component={HistoryScreen} />
+    </>
+  ) : (
+    <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown:false }} />
+  )}
+
+
     </Stack.Navigator>
   );
 }
+
+
+
+  
