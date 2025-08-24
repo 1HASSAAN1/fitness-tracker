@@ -6,7 +6,10 @@ import { auth } from "../lib/firebase";
 import HistoryScreen from "../screens/HistoryScreen";
 import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
+import MetricsScreen from "../screens/MetricsScreen";
+import ProgressScreen from "../screens/ProgressScreen";
 import WorkoutEditor from "../screens/WorkoutEditor";
+
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +37,9 @@ export default function RootNavigator() {
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="WorkoutEditor" component={WorkoutEditor} options={{ title: "New Workout" }} />
       <Stack.Screen name="History" component={HistoryScreen} />
+      <Stack.Screen name="Metrics" component={MetricsScreen} />
+      <Stack.Screen name="Progress" component={ProgressScreen} />
+
     </>
   ) : (
     <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown:false }} />

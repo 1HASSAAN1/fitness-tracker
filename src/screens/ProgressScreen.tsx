@@ -1,0 +1,54 @@
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import React from "react";
+import { Dimensions, ScrollView, Text } from "react-native";
+import { LineChart } from "react-native-chart-kit";
+import { auth, db } from "../lib/firebase";
+
+export default function ProgressScreen() {
+  const [labels, setLabels] = React.useState<string[]>([]);
+  const [data, setData] = React.useState<number[]>([]);
+  const uid = auth.currentUser?.uid;
+
+  React.useEffect(() => {
+    if (!uid) return;
+    const q = query(collection(db, "users", uid, "metrics"), orderBy("date"));
+    const unsub = onSnapshot(q, (snap) => {
+      const points = snap.docs
+        .map((d) => d.data() as any)
+        .filter((p) => typeof p.weightKg === "number");
+      setLabels(points.map((p) => {
+        const ms = p.date?.seconds ? p.date.seconds * 1000 : Date.now();
+        return new Date(ms).toLocaleDateString();
+      }));
+      setData(points.map((p) => p.weightKg));
+    });
+    return unsub;
+  }, [uid]);
+
+  const width = Dimensions.get("window").width - 32;
+
+  return (
+    <ScrollView style={{ flex:1, padding:16 }}>
+      <Text style={{ fontSize:22, fontWeight:"700", marginBottom:12 }}>Progress</Text>
+      {data.length >= 2 ? (
+        <LineChart
+          data={{ labels, datasets: [{ data }] }}
+          width={width}
+          height={220}
+          yAxisSuffix=" kg"
+          chartConfig={{
+            backgroundColor: "#111",
+            backgroundGradientFrom: "#111",
+            backgroundGradientTo: "#111",
+            decimalPlaces: 1,
+            color: (o=1) => `rgba(255,255,255,${o})`,
+            labelColor: (o=1) => `rgba(255,255,255,${o})`,
+          }}
+          style={{ borderRadius: 8 }}
+        />
+      ) : (
+        <Text>Add at least two weight entries to see a chart.</Text>
+      )}
+    </ScrollView>
+  );
+}

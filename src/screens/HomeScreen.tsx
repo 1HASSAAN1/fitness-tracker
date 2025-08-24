@@ -13,6 +13,10 @@ export default function HomeScreen() {
       <Button title="Start Workout" onPress={() => nav.navigate("WorkoutEditor")} />
       <Button title="History" onPress={() => nav.navigate("History")} />
       <Button title="Sign Out" color="#c00" onPress={() => signOut(auth)} />
-    </View>
+        // src/screens/HomeScreen.tsx
+      <Button title="Log Weight" onPress={() => nav.navigate("Metrics")} />
+      <Button title="Progress" onPress={() => nav.navigate("Progress")} />
+
+</View>
   );
 }
