@@ -1,3 +1,4 @@
+// src/screens/ProgressScreen.tsx
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import React from "react";
 import { Dimensions, ScrollView, Text } from "react-native";
@@ -11,16 +12,15 @@ export default function ProgressScreen() {
 
   React.useEffect(() => {
     if (!uid) return;
-    const q = query(collection(db, "users", uid, "metrics"), orderBy("date"));
+    const q = query(
+      collection(db, "users", uid, "metricsDaily"),
+      orderBy("dateKey") // string sort works for YYYY-MM-DD
+    );
     const unsub = onSnapshot(q, (snap) => {
-      const points = snap.docs
-        .map((d) => d.data() as any)
-        .filter((p) => typeof p.weightKg === "number");
-      setLabels(points.map((p) => {
-        const ms = p.date?.seconds ? p.date.seconds * 1000 : Date.now();
-        return new Date(ms).toLocaleDateString();
-      }));
-      setData(points.map((p) => p.weightKg));
+      const rows = snap.docs.map(d => d.data() as any)
+        .filter(r => typeof r.weightKg === "number");
+      setLabels(rows.map(r => r.dateKey));
+      setData(rows.map(r => r.weightKg));
     });
     return unsub;
   }, [uid]);
@@ -47,7 +47,7 @@ export default function ProgressScreen() {
           style={{ borderRadius: 8 }}
         />
       ) : (
-        <Text>Add at least two weight entries to see a chart.</Text>
+        <Text>Add weights for multiple days to see a chart.</Text>
       )}
     </ScrollView>
   );
