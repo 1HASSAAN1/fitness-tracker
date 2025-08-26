@@ -11,6 +11,7 @@ export default function HomeScreen() {
     <View style={{ flex:1, padding:16, gap:12, justifyContent:"center" }}>
       <Text style={{ fontSize:24, fontWeight:"700", textAlign:"center" }}>Fitness Tracker</Text>
       <Button title="Start Workout" onPress={() => nav.navigate("WorkoutEditor")} />
+        <Button title="Duplicate Last → Today" onPress={() => nav.navigate("WorkoutEditor", { templateFrom: "last" })} />
       <Button title="History" onPress={() => nav.navigate("History")} />
       <Button title="Sign Out" color="#c00" onPress={() => signOut(auth)} />
         // src/screens/HomeScreen.tsx
